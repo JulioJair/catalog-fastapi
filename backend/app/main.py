@@ -129,7 +129,11 @@ def store_user(
     """
     Create new user.
     """
-    user = models.User(request)
+    user = models.User(
+        full_name=request.full_name,
+        email=request.email,
+        hashed_password=request.hashed_password
+    )
     db.add(user)
     db.commit()
     db.refresh(user)

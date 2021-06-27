@@ -1,8 +1,8 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, DateTime
 from .database import Base
 from sqlalchemy.orm import relationship
+import datetime
 
-# from app import database
 
 class User(Base):
     __tablename__ = "users"
@@ -12,7 +12,7 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
-    is_superuser = Column(Boolean(), default=False)
+    is_admin = Column(Boolean, default=True)
 
     # products = relationship("Product", back_populates="editor")
 
@@ -26,5 +26,7 @@ class Product(Base):
     price = Column(Float)
     brand = Column(String, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     # editor = relationship("User", back_populates="products")

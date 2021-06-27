@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 from fastapi import Path
+import datetime
 
 # Shared properties
 class ProductBase(BaseModel):
@@ -8,6 +9,9 @@ class ProductBase(BaseModel):
     name: str
     price: float
     brand: Optional[str]
+    user_id: Optional[int]
+    created_at: Optional[datetime.datetime] = datetime.datetime.utcnow()
+    updated_at: Optional[datetime.datetime] = datetime.datetime.utcnow()
 
 
 # Properties shared by models stored in DB

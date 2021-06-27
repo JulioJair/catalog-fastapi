@@ -1,2 +1,3 @@
 __pycache__
 catalog.db
+.fuse_hidden*

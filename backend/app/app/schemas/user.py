@@ -5,7 +5,7 @@ from typing import Optional
 class UserBase(BaseModel):
     full_name: str
     email: EmailStr
-    hashed_password: str = Field(description="Password hashed")
+    password: str = Field(description="Password hashed")
     is_active: Optional[bool] = Field(
         1, description="Is the user account active?")
     is_admin: Optional[bool] = Field(1, description="Is the user admin?")
@@ -20,7 +20,7 @@ class User(UserBase):
 class UserUpdate(UserBase):
     full_name: Optional[str]
     email: Optional[EmailStr]
-    hashed_password: Optional[str]
+    password: Optional[str]
     is_active: Optional[bool]
     is_admin: Optional[bool]
 

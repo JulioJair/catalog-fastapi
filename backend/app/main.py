@@ -4,6 +4,7 @@ from typing import Optional, Any
 from app import schemas, models, database
 from app.database import engine
 from sqlalchemy.orm import Session
+from app.hashing import Hash
 
 app = FastAPI()
 
@@ -21,13 +22,16 @@ get_db = database.get_db
 def success_response(data=None, datatype=None):
     return {'success': True, 'datatype': datatype, 'data': data}
 
+def response(detail=None):
+    return {'detail': detail}
+
 
 @app.get("/products")
 def index_products(
-        *,
         db: Session = Depends(get_db),
-        skip: int = Path(0, description="Apply offset to the query", gt=-1),
-        limit: int = Path(10, description="Set a limit of products retrieved"),
+        skip: int = Query(0, description="Apply offset to the query"),
+        limit: int = Query(
+            10, description="Set a limit of products retrieved"),
 ):
     """
     Retrieve products.
@@ -72,7 +76,7 @@ def store_product(
     return success_response(product, f'Product stored.')
 
 
-@app.put("/product/{id}")
+@app.put("/products/{id}")
 def update_product(
         id: int,
         request: schemas.ProductUpdate,
@@ -129,10 +133,14 @@ def store_user(
     """
     Create new user.
     """
+    # Check if user already exists
+    if db.query(models.User).filter_by(email=request.email).first():
+        return response(f"User with mail '{request.email}' already exists")
+    # Attempt to store the new user
     user = models.User(
         full_name=request.full_name,
         email=request.email,
-        hashed_password=request.hashed_password
+        hashed_password=Hash.bcrypt(request.password)
     )
     db.add(user)
     db.commit()

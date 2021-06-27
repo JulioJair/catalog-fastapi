@@ -2,3 +2,5 @@ fastapi
 uvicorn
 sqlalchemy==1.3
 pydantic[email]
+passlib[bcrypt]
+python-jose

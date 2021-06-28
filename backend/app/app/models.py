@@ -40,4 +40,4 @@ class Analytic(Base):
     times_requested = Column(Integer, index=True)
     product_id = Column(Integer, ForeignKey("products.id"))
 
-    product = relationship("Product", back_populates="editor")
+    product = relationship("Product", back_populates="analytic")

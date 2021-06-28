@@ -23,6 +23,13 @@ def show(db: Session, id):
     if not product:
         raise HTTPException(
             status_code=404, detail=f"Product with id {id} not found")
+
+    # Count every query to each product_id
+    # feat: A condition to avoid counting from same user in less than one hour would be great
+    analytic = db.query(models.Analytic).filter_by(
+        product_id=product.id).first()
+    analytic.times_requested = analytic.times_requested + 1
+    db.commit()
     return product
 
 
@@ -30,6 +37,7 @@ def store(db: Session, request):
     """
     Create new product.
     """
+    # Store product
     product = models.Product(
         sku=request.sku,
         name=request.name,
@@ -38,6 +46,15 @@ def store(db: Session, request):
     )
     db.add(product)
     db.commit()
+
+    # Store analytic data for current product
+    analytic = models.Analytic(
+        product_id=product.id,
+        times_requested=0,
+    )
+    db.add(analytic)
+    db.commit()
+
     db.refresh(product)
     return product
 

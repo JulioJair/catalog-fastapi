@@ -33,6 +33,7 @@ def show_product(
 ):
     """
     Show product data.
+    Every query to each product will be tracked.
     """
     return crud_product.show(db, id=id)
 

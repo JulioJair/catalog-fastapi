@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query, Path
 
 from typing import Optional, Any
-from app import schemas, models, database
+from app import schemas, models, database, oauth2
 from sqlalchemy.orm import Session
-
-# from ..dependencies import get_token_header
+from ..controllers import crud_product
 
 router = APIRouter(
     prefix="/products",
@@ -12,9 +11,6 @@ router = APIRouter(
     # dependencies=[Depends(get_token_header)],
     responses={404: {"description": "Product not found"}},
 )
-
-def response(detail=None):
-    return {'detail': detail}
 
 
 @router.get("/", tags=[])
@@ -27,8 +23,7 @@ def index_products(
     """
     Retrieve products.
     """
-    products = db.query(models.Product).offset(skip).limit(limit).all()
-    return products
+    return crud_product.index(db, skip=skip, limit=limit)
 
 
 @router.get("/{id}", tags=[], response_model=schemas.ProductOut)
@@ -39,11 +34,7 @@ def show_product(
     """
     Show product data.
     """
-    product = db.query(models.Product).get(id)
-    if not product:
-        raise HTTPException(
-            status_code=404, detail=f"Product with id {id} not found")
-    return product
+    return crud_product.show(db, id=id)
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, tags=[])
@@ -51,63 +42,34 @@ def store_product(
         *,
         request: schemas.ProductCreate,
         db: Session = Depends(database.get_db),
+        current_user: schemas.UserOut = Depends(oauth2.get_current_user)
 ):
     """
     Create new product.
     """
-    product = models.Product(
-        sku=request.sku,
-        name=request.name,
-        price=request.price,
-        brand=request.brand
-    )
-    db.add(product)
-    db.commit()
-    db.refresh(product)
-    return product
+    return crud_product.store(db, request=request)
 
 
 @router.put("/{id}", tags=[], response_model=schemas.ProductOut)
 def update_product(
         id: int,
         request: schemas.ProductUpdate,
-        db: Session = Depends(database.get_db)
+        db: Session = Depends(database.get_db),
+        current_user: schemas.UserOut = Depends(oauth2.get_current_user)
 ):
     """
     Update product, will replace only the atributes in the request.
     """
-    product = db.query(models.Product).get(id)
-    if not product:
-        raise HTTPException(status_code=404,
-                            detail=f"Product with id {id} not found")
-
-    # Partial update similar to PATCH verb
-    if request.sku:
-        product.sku = request.sku
-    if request.name:
-        product.name = request.name
-    if request.price:
-        product.price = request.price
-    if request.brand:
-        product.brand = request.brand
-
-    db.commit()
-    return product
+    return crud_product.update(db, id=id, request=request)
 
 
 @router.delete("/{id}", tags=[])
 def delete_product(
     id: int = Query(..., description="The ID of the product to delete"),
     db: Session = Depends(database.get_db),
+    current_user: schemas.UserOut = Depends(oauth2.get_current_user)
 ):
     """
     Destroy product record.
     """
-    product = db.query(models.Product).filter_by(id=id)
-    if not product.first():
-        raise HTTPException(
-            status_code=404, detail=f"Product with id {id} not found")
-
-    product.delete(synchronize_session=False)
-    db.commit()
-    return response(f'Product {id} deleted')
+    return crud_product.delete(db, id=id)

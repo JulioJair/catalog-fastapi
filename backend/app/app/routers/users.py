@@ -43,7 +43,7 @@ def show_user(
     return crud_user.show(db, id=id)
 
 @router.put("/{id}", tags=[], response_model=schemas.UserOut)
-def update_product(
+def update_user(
         id: int,
         request: schemas.ProductUpdate,
         db: Session = Depends(database.get_db),
@@ -56,7 +56,7 @@ def update_product(
 
 
 @router.delete("/{id}", tags=[])
-def delete_product(
+def delete_user(
     id: int = Query(..., description="The ID of the user to delete"),
     db: Session = Depends(database.get_db),
     current_user: schemas.UserOut = Depends(oauth2.get_current_user)
@@ -65,3 +65,12 @@ def delete_product(
     Destroy product record.
     """
     return crud_user.delete(db, id=id)
+
+@router.get("/reset", tags=['reset'])
+def reset(
+    db: Session = Depends(database.get_db)
+):
+    """
+    Reset users table.
+    """
+    return crud_user.reset(db)

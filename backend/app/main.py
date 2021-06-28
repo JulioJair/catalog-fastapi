@@ -38,7 +38,7 @@ def index_products(
     return products
 
 
-@app.get("/products/{id}", tags=['Products'])
+@app.get("/products/{id}", tags=['Products'], response_model=schemas.ProductOut)
 def show_product(
     id: int = Path(None, description="The ID of the product", gt=0),
         db: Session = Depends(get_db)

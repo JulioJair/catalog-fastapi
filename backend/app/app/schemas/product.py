@@ -29,7 +29,9 @@ class ProductUpdate(ProductBase):
 
 # Properties to return to client
 class ProductOut(ProductBase):
-    pass
+    from .user import UserOut
+
+    editor: UserOut
     class Config():
         orm_mode = True
 

@@ -14,7 +14,7 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     is_admin = Column(Boolean, default=True)
 
-    # products = relationship("Product", back_populates="editor")
+    products = relationship("Product", back_populates="editor")
 
 
 class Product(Base):
@@ -29,4 +29,4 @@ class Product(Base):
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow)
 
-    # editor = relationship("User", back_populates="products")
+    editor = relationship("User", back_populates="products")

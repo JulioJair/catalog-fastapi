@@ -3,3 +3,4 @@ __pycache__
 .deta
 .fuse_hidden*
 catalog.db
+log.txt

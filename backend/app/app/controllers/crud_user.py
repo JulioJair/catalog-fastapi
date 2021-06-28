@@ -3,7 +3,12 @@ from app import schemas, models, database
 from fastapi import HTTPException, status, Query
 from app.hashing import Hash
 
-def store(db,request = schemas.UserCreate):
+
+def response(detail=None):
+    return {'detail': detail}
+
+
+def store(db, request=schemas.UserCreate):
     """
     Create new user.
     """
@@ -22,6 +27,7 @@ def store(db,request = schemas.UserCreate):
     db.refresh(user)
     return user
 
+
 def show(db: Session, id):
     """
     Show user data.
@@ -31,3 +37,34 @@ def show(db: Session, id):
         raise HTTPException(
             status_code=404, detail=f"User with id {id} not found")
     return user
+
+
+def update(db: Session, id, request):
+    """
+    Update user, will replace only the atributes in the request.
+    """
+    user = db.query(models.User).get(id)
+    if not user:
+        raise HTTPException(status_code=404,
+                            detail=f"User with id {id} not found")
+
+    # Partial update similar to PATCH verb
+    if request.full_name:
+        user.full_name = request.full_name
+
+    db.commit()
+    return user
+
+
+def delete(db: Session, id):
+    """
+    Destroy user record.
+    """
+    product = db.query(models.Product).filter_by(id=id)
+    if not product.first():
+        raise HTTPException(
+            status_code=404, detail=f"User with id {id} not found")
+
+    product.delete(synchronize_session=False)
+    db.commit()
+    return response(f'User {id} deleted')

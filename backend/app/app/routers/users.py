@@ -41,3 +41,27 @@ def show_user(
     Show user.
     """
     return crud_user.show(db, id=id)
+
+@router.put("/{id}", tags=[], response_model=schemas.UserOut)
+def update_product(
+        id: int,
+        request: schemas.ProductUpdate,
+        db: Session = Depends(database.get_db),
+        current_user: schemas.UserOut = Depends(oauth2.get_current_user)
+):
+    """
+    Update user, will replace only the atributes in the request.
+    """
+    return crud_user.update(db, id=id, request=request)
+
+
+@router.delete("/{id}", tags=[])
+def delete_product(
+    id: int = Query(..., description="The ID of the user to delete"),
+    db: Session = Depends(database.get_db),
+    current_user: schemas.UserOut = Depends(oauth2.get_current_user)
+):
+    """
+    Destroy product record.
+    """
+    return crud_user.delete(db, id=id)

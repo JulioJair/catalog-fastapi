@@ -1,11 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query, Path
 
 from typing import Optional, Any
-from app import schemas, models, database
+from app import schemas, models, database, oauth2
 from sqlalchemy.orm import Session
 from ..controllers import crud_product
-
-# from ..dependencies import get_token_header
 
 router = APIRouter(
     prefix="/products",
@@ -44,6 +42,7 @@ def store_product(
         *,
         request: schemas.ProductCreate,
         db: Session = Depends(database.get_db),
+        current_user: schemas.UserOut = Depends(oauth2.get_current_user)
 ):
     """
     Create new product.
@@ -55,7 +54,8 @@ def store_product(
 def update_product(
         id: int,
         request: schemas.ProductUpdate,
-        db: Session = Depends(database.get_db)
+        db: Session = Depends(database.get_db),
+        current_user: schemas.UserOut = Depends(oauth2.get_current_user)
 ):
     """
     Update product, will replace only the atributes in the request.
@@ -67,6 +67,7 @@ def update_product(
 def delete_product(
     id: int = Query(..., description="The ID of the product to delete"),
     db: Session = Depends(database.get_db),
+    current_user: schemas.UserOut = Depends(oauth2.get_current_user)
 ):
     """
     Destroy product record.

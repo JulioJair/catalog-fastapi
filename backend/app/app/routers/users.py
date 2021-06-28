@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Path
 
 from typing import Optional, Any
-from app import schemas, models, database
+from app import schemas, models, database, oauth2
 from sqlalchemy.orm import Session
 from ..controllers import crud_user
 
@@ -24,6 +24,7 @@ def store_user(
         *,
         request: schemas.UserCreate,
         db: Session = Depends(database.get_db),
+        get_current_user: schemas.UserOut = Depends(oauth2.get_current_user)
 ):
     """
     Create new user.
@@ -39,4 +40,4 @@ def show_user(
     """
     Show user.
     """
-    return crud_product.show(db, id=id)
+    return crud_user.show(db, id=id)

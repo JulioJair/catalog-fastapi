@@ -5,7 +5,7 @@ from app.hashing import Hash
 
 
 def login(db, request):
-    user = db.query(models.User).filter_by(email=request.email).first()
+    user = db.query(models.User).filter_by(email=request.username).first()
     if not user:
         raise HTTPException(status_code=404, detail=f"User not found")
     if not Hash.verify(user.hashed_password, request.password):

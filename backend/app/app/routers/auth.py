@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, Path
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from typing import Optional, Any
 from app import schemas, models, database
@@ -22,7 +23,7 @@ router = APIRouter(
 
 @router.post('/login')
 def login(
-    request: schemas.Login,
+    request: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(database.get_db)
 ):
     return auth.login(db, request)

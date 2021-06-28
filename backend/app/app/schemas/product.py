@@ -9,13 +9,12 @@ class ProductBase(BaseModel):
     name: str
     price: float
     brand: Optional[str]
-    user_id: Optional[int]
-    created_at: Optional[datetime.datetime] = datetime.datetime.utcnow()
-    updated_at: Optional[datetime.datetime] = datetime.datetime.utcnow()
+    # created_at: Optional[datetime.datetime] = datetime.datetime.utcnow()
+    # updated_at: Optional[datetime.datetime] = datetime.datetime.utcnow()
 
 
 # Properties shared by models stored in DB
-class Product(ProductBase):
+class ProductCreate(ProductBase):
     class Config():
         orm_mode = True
 
@@ -29,12 +28,9 @@ class ProductUpdate(ProductBase):
 
 
 # Properties to return to client
-class ProductIndex(Product):
+class ProductOut(ProductBase):
     pass
-
-
-# Properties to return to client
-class ProductShow(Product):
-    pass
+    class Config():
+        orm_mode = True
 
 

@@ -1,2 +1,2 @@
-from .product import ProductBase, Product, ProductUpdate, ProductShow, ProductIndex
-from .user import UserBase, User, UserUpdate, UserShow, UserIndex
+from .product import ProductBase, ProductCreate, ProductUpdate, ProductOut
+from .user import UserBase, UserCreate, UserUpdate, UserOut

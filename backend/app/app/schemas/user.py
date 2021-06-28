@@ -6,12 +6,9 @@ class UserBase(BaseModel):
     full_name: str
     email: EmailStr
     password: str = Field(description="Password hashed")
-    is_active: Optional[bool] = Field(
-        1, description="Is the user account active?")
-    is_admin: Optional[bool] = Field(1, description="Is the user admin?")
 
 
-class User(UserBase):
+class UserCreate(UserBase):
     class Config():
         orm_mode = True
 
@@ -26,10 +23,11 @@ class UserUpdate(UserBase):
 
 
 # Properties to return to client
-class UserIndex(User):
-    pass
-
-
-# Properties to return to client
-class UserShow(User):
-    pass
+class UserOut(BaseModel):
+    full_name: str
+    email: EmailStr
+    is_active: Optional[bool] = Field(
+        1, description="Is the user account active?")
+    is_admin: Optional[bool] = Field(1, description="Is the user admin?")
+    class Config():
+        orm_mode = True

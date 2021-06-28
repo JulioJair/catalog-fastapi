@@ -1,3 +1,4 @@
+from sqlalchemy.sql import schema
 import uvicorn
 from fastapi import FastAPI, Path, Query, HTTPException, Depends
 from typing import Optional, Any
@@ -19,14 +20,11 @@ def read_root():
 get_db = database.get_db
 
 
-def success_response(data=None, datatype=None):
-    return {'success': True, 'datatype': datatype, 'data': data}
-
 def response(detail=None):
     return {'detail': detail}
 
 
-@app.get("/products")
+@app.get("/products", tags=['Products'])
 def index_products(
         db: Session = Depends(get_db),
         skip: int = Query(0, description="Apply offset to the query"),
@@ -37,10 +35,10 @@ def index_products(
     Retrieve products.
     """
     products = db.query(models.Product).offset(skip).limit(limit).all()
-    return success_response(products, f'List of products, limited to {limit}')
+    return products
 
 
-@app.get("/products/{id}")
+@app.get("/products/{id}", tags=['Products'])
 def show_product(
     id: int = Path(None, description="The ID of the product", gt=0),
         db: Session = Depends(get_db)
@@ -52,13 +50,13 @@ def show_product(
     if not product:
         raise HTTPException(
             status_code=404, detail=f"Product with id {id} not found")
-    return success_response(product, f'Product retrieved')
+    return product
 
 
-@app.post("/products")
+@app.post("/products", tags=['Products'])
 def store_product(
         *,
-        request: schemas.Product,
+        request: schemas.ProductCreate,
         db: Session = Depends(get_db),
 ):
     """
@@ -73,10 +71,10 @@ def store_product(
     db.add(product)
     db.commit()
     db.refresh(product)
-    return success_response(product, f'Product stored.')
+    return product
 
 
-@app.put("/products/{id}")
+@app.put("/products/{id}", tags=['Products'], response_model=schemas.ProductOut)
 def update_product(
         id: int,
         request: schemas.ProductUpdate,
@@ -101,10 +99,10 @@ def update_product(
         product.brand = request.brand
 
     db.commit()
-    return success_response(None, f"Product updated")
+    return product
 
 
-@app.delete("/products/{id}")
+@app.delete("/products/{id}", tags=['Products'])
 def delete_product(
     id: int = Query(..., description="The ID of the product to delete"),
     db: Session = Depends(get_db),
@@ -112,22 +110,22 @@ def delete_product(
     """
     Destroy product record.
     """
-    product = db.query(models.Product).get(id)
+    product = db.query(models.Product).filter_by(id=id)
     if not product.first():
         raise HTTPException(
             status_code=404, detail=f"Product with id {id} not found")
 
     product.delete(synchronize_session=False)
     db.commit()
-    return success_response()
+    return response(f'Product {id} deleted')
 
 # # # # # # # # # # # # # # #
 
 
-@app.post("/users")
+@app.post("/users", tags=['Users'], response_model=schemas.UserOut)
 def store_user(
         *,
-        request: schemas.User,
+        request: schemas.UserCreate,
         db: Session = Depends(get_db),
 ):
     """
@@ -145,7 +143,22 @@ def store_user(
     db.add(user)
     db.commit()
     db.refresh(user)
-    return success_response(user, f'User stored.')
+    return user
+
+
+@app.get("/users/{id}", tags=['Users'], response_model=schemas.UserOut)
+def show_user(
+    id: int = Path(None, description="The ID of the user", gt=0),
+    db: Session = Depends(get_db),
+):
+    """
+    Show user.
+    """
+    user = db.query(models.User).get(id)
+    if not user:
+        raise HTTPException(
+            status_code=404, detail=f"User with id {id} not found")
+    return user
 
 
 if __name__ == "__main__":

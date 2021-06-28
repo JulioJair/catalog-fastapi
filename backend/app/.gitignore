@@ -1,2 +1,5 @@
 __pycache__
 /venv/
+.deta
+.fuse_hidden*
+catalog.db

@@ -8,5 +8,5 @@ RUN pip install -r requirements.txt
 
 EXPOSE 8000
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "-p", "8000"]
+CMD ["uvicorn", "main:app"]
 # CMD ["python app.py"]

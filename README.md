@@ -19,32 +19,32 @@ _FastAPI framework, high performance, easy to learn, fast to code, ready for pro
 
 ```
 .
-├── app              	 	# root of the API project
-│   ├── catalog.db       	# project database
-│   ├── main.py          	# "main" module, e.g. import app.main
-│   ├── requirements.py  	# necessary packages
-│   └── app  	         	# "app" is a "Python subpackage"
-│   	├── __init__.py  	# makes "routers" a "Python subpackage"
-│   	├── database.py     # Connection and config to database related
-│		├──	hashing.py		# Encrypt and validate passwords
-│		├──	models.py		# Models with their relations
-│		├──	oauth2			# Authorization by token
-│		├── token			# JWT tokens implementation
-│		├── controllers		# To separate logic from endpoint
-│		│	├── __init__.py # makes "controllers" a "Python subpackage"
-│		│	├── ..
-│		│	├── ..
-│		│	└── auth.py		# Login function
-│		├── routers			# points of entry organized by prefix
-│		│	├── __init__.py # makes "routers" a "Python subpackage"
-│		│	├── users.py
-│		│	├── products.py
-│   	│	└── analytics.py
-│   	└── schemas         # Pydantic schemas
-│       	├── __init__.py # makes "schemas" a "Python subpackage"
-│			├── users.py
-│			├── products.py
-│       	└── analytics.py
+├── app              	# root of the API project
+│   ├─ catalog.db		# project database
+│   ├─ main.py          # "main" module, e.g. import app.main
+│   ├─ requirements.py  # necessary packages
+│   └─ app  	        # "app" is a "Python subpackage"
+│   	├─ __init__.py  # makes "routers" a "Python subpackage"
+│   	├─ database.py  # Connection and config to database related
+│		├─ hashing.py	# Encrypt and validate passwords
+│		├─ models.py	# Models with their relations
+│		├─ oauth2		# Authorization by token
+│		├─ token		# JWT tokens implementation
+│		├─ controllers	# To separate logic from endpoint
+│		│	├─ __init__.py 
+│		│	├─ ..
+│		│	├─ ..
+│		│	└─ auth.py	 # Include login function
+│		├─ routers		 # points of entry organized by prefix
+│		│	├─ __init__.py 
+│		│	├─ users.py
+│		│	├─ products.py
+│   	│	└─ analytics.py
+│   	└─ schemas       # Pydantic to validate inputs and responses
+│       	├─ __init__.py 
+│			├─ users.py
+│			├─ products.py
+│       	└─ analytics.py
 
 ```
 ## Backend Requirements

@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query, Path, Back
 from typing import Optional, Any
 from app import schemas, models, database, oauth2
 from sqlalchemy.orm import Session
-from ..controllers import crud_product
+from ..controllers import crud_product, crud_analytic
 
 router = APIRouter(
     prefix="/products",
@@ -75,3 +75,14 @@ def delete_product(
     Destroy product record.
     """
     return crud_product.delete(db, id=id)
+
+
+@router.get("/{id}/analytics", tags=['Analytics'], response_model=schemas.Analytic)
+def show_product_analytics(
+    id: int = Path(None, description="The ID of the product", gt=0),
+        db: Session = Depends(database.get_db)
+):
+    """
+    Show product analytics data.
+    """
+    return crud_analytic.show(db, id=id)

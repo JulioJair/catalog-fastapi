@@ -1,10 +1,17 @@
 from sqlalchemy.orm import Session
-from app import schemas, models, database
-from fastapi import HTTPException, status, Query
+from app import models, 
+from fastapi import HTTPException,
+from .send_email import send_email_background
 
 
 def response(detail=None):
     return {'detail': detail}
+
+# In case we need to log emails sent
+def write_notification(email: str, message=""):
+    with open("log.txt", mode="w") as email_file:
+        content = f"notification for {email}: {message}"
+        email_file.write(content)
 
 
 def index(db: Session, skip: int = 0, limit: int = 10):
@@ -59,7 +66,7 @@ def store(db: Session, request):
     return product
 
 
-def update(db: Session, id, request):
+def update(db: Session, id, request, background_tasks):
     """
     Update product, will replace only the atributes in the request.
     """
@@ -67,7 +74,8 @@ def update(db: Session, id, request):
     if not product:
         raise HTTPException(status_code=404,
                             detail=f"Product with id {id} not found")
-
+    import copy
+    product_old_data = copy.deepcopy(product)
     # Partial update similar to PATCH verb
     if request.sku:
         product.sku = request.sku
@@ -78,6 +86,24 @@ def update(db: Session, id, request):
     if request.brand:
         product.brand = request.brand
 
+    # Retrieve all email addresses from admin users
+    admin_emails = db.query(models.User.email).filter_by(is_admin=True).all()
+    if admin_emails:
+        # Convert 1-element tuple to a list
+        emails_to = [i[0] for i in admin_emails]
+
+        # Notify admins about product price changed
+        send_email_background(
+            background_tasks=background_tasks,
+            subject='A product has been changed',
+            emails_to=emails_to,
+            body=f"""The product with id {id}
+                sku: {product_old_data.sku} -> {product.sku}
+                name: {product_old_data.name} -> {product.name}
+                price: {product_old_data.price} -> {product.price}
+                brand: {product_old_data.brand} -> {product.brand}
+                """
+        )
     db.commit()
     return product
 

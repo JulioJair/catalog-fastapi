@@ -60,11 +60,11 @@ def delete(db: Session, id):
     """
     Destroy user record.
     """
-    product = db.query(models.Product).filter_by(id=id)
-    if not product.first():
+    user = db.query(models.User).filter_by(id=id)
+    if not user.first():
         raise HTTPException(
             status_code=404, detail=f"User with id {id} not found")
 
-    product.delete(synchronize_session=False)
+    user.delete(synchronize_session=False)
     db.commit()
     return response(f'User {id} deleted')

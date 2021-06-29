@@ -6,12 +6,11 @@ from sqlalchemy.orm import Session
 from ..controllers import crud_user
 
 
-
 router = APIRouter(
     prefix="/users",
     tags=["Users"],
     # dependencies=[Depends(get_token_header)],
-    responses={404: {"description": "Product not found"}},
+    responses={404: {"description": "User not found"}},
 )
 
 
@@ -42,10 +41,11 @@ def show_user(
     """
     return crud_user.show(db, id=id)
 
+
 @router.put("/{id}", tags=[], response_model=schemas.UserOut)
 def update_user(
         id: int,
-        request: schemas.ProductUpdate,
+        request: schemas.UserUpdate,
         db: Session = Depends(database.get_db),
         current_user: schemas.UserOut = Depends(oauth2.get_current_user)
 ):
@@ -65,12 +65,3 @@ def delete_user(
     Destroy product record.
     """
     return crud_user.delete(db, id=id)
-
-@router.get("/reset", tags=['reset'])
-def reset(
-    db: Session = Depends(database.get_db)
-):
-    """
-    Reset users table.
-    """
-    return crud_user.reset(db)

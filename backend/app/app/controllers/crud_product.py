@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from app import models, 
-from fastapi import HTTPException,
+from app import models
+from fastapi import HTTPException
 from .send_email import send_email_background
 
 

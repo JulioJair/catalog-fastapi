@@ -1,11 +1,12 @@
-FROM python:3.7
+FROM python:3.9-slim
 
-RUN pip install -r app/requirements.txt
+COPY ./app /catalog
 
-EXPOSE 80
+WORKDIR /catalog
 
-COPY ./app /app
+RUN pip install -r requirements.txt
 
-WORKDIR /app
+EXPOSE 8000
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "-p", "8000"]
+# CMD ["python app.py"]

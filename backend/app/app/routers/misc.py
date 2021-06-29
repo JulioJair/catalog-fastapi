@@ -72,4 +72,4 @@ def reset(
     db.add(analytic2)
     db.commit()
     db.refresh(user)
-    return user
+    return response('Done, System restored. :D')

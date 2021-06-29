@@ -1,7 +1,5 @@
-from fastapi import FastAPI
-from app import schemas, models, database, oauth2
-from fastapi_mail import FastMail, MessageSchema,ConnectionConfig
-from pydantic import EmailStr, BaseModel
+from fastapi import FastAPI, BackgroundTasks
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from typing import List
 
 conf = ConnectionConfig(
@@ -15,25 +13,25 @@ conf = ConnectionConfig(
 )
 
 
-async def product_changed_mail(emails, id):
-   template = f"""
-		<html>
-		<body>
-      <p>Hello admin
-		<br>The product price with {id} has been changed!!!</p>
-		</body>
-		</html>
-		"""
+async def send_email_async(subject: str, emails_to: list, body: str):
+    message = MessageSchema(
+        subject=subject,
+        recipients=emails_to,
+        body=body,
+        subtype='html',
+    )
 
-   message = MessageSchema(
-      subject="Fastapi-Mail module",
-      # List of recipients, as many as you can pass
-      recipients=emails,
-      body=template,
-      subtype="html"
-   )
+    fm = FastMail(conf)
+    await fm.send_message(message, template_name='email.html')
 
-   fm = FastMail(conf)
-   await fm.send_message(message)
 
-   return True
+def send_email_background(background_tasks: BackgroundTasks, subject: str, emails_to: list, body: str):
+    message = MessageSchema(
+        subject=subject,
+        recipients=emails_to,
+        body=body,
+        subtype='html',
+    )
+    fm = FastMail(conf)
+    background_tasks.add_task(
+        fm.send_message, message, template_name='email.html')

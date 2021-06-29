@@ -1,23 +1,21 @@
+from dotenv import load_dotenv
 import uvicorn
 from fastapi import FastAPI
 from app import models
 from app.database import engine
-from app.routers import products, users, auth
+from app.routers import products, users, auth, analytics, misc
 
 app = FastAPI()
 
 models.Base.metadata.create_all(engine)
 
 
-@app.get("/")
-def root():
-    return {"detail": "Catalog API"}
-
-
 # Endpoints
 app.include_router(auth.router)
-app.include_router(products.router)
 app.include_router(users.router)
+app.include_router(products.router)
+app.include_router(analytics.router)
+app.include_router(misc.router)
 
 
 if __name__ == "__main__":

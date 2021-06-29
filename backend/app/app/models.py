@@ -30,3 +30,14 @@ class Product(Base):
     updated_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     editor = relationship("User", back_populates="products")
+    analytic = relationship("Analytic", back_populates="product")
+
+
+class Analytic(Base):
+    __tablename__ = "analytics"
+
+    id = Column(Integer, primary_key=True, index=True)
+    times_requested = Column(Integer, index=True)
+    product_id = Column(Integer, ForeignKey("products.id"))
+
+    product = relationship("Product", back_populates="analytic")

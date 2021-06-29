@@ -3,8 +3,11 @@ from typing import Optional
 from fastapi import Path
 import datetime
 
+
 # Shared properties
 class ProductBase(BaseModel):
+    from .analytic import Analytic
+
     sku: str = Field(description="Product identifier")
     name: str
     price: float
@@ -31,7 +34,7 @@ class ProductUpdate(ProductBase):
 class ProductOut(ProductBase):
     from .user import UserOut
 
-    editor: UserOut
+    editor: UserOut = None
     class Config():
         orm_mode = True
 

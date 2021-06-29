@@ -10,18 +10,19 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     pass
+
     class Config():
         orm_mode = True
 
 
 # Properties to receive via API on update
-class UserUpdate(UserBase):
+class UserUpdate(BaseModel):
     full_name: Optional[str]
-    email: Optional[EmailStr]
-    password: Optional[str]
-    is_active: Optional[bool] = Field(
-        1, description="Is the user account active?")
-    is_admin: Optional[bool] = Field(1, description="Is the user admin?")
+    # email: Optional[EmailStr]
+    # password: Optional[str]
+    # is_active: Optional[bool] = Field(
+    #     1, description="Is the user account active?")
+    # is_admin: Optional[bool] = Field(1, description="Is the user admin?")
 
 
 # Properties to return to client

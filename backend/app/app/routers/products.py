@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query, Path
+from fastapi import APIRouter, Depends, HTTPException, status, Query, Path, BackgroundTasks
 
 from typing import Optional, Any
 from app import schemas, models, database, oauth2
 from sqlalchemy.orm import Session
-from ..controllers import crud_product
+from ..controllers import crud_product, crud_analytic
 
 router = APIRouter(
     prefix="/products",
@@ -33,6 +33,7 @@ def show_product(
 ):
     """
     Show product data.
+    Every query to each product will be tracked.
     """
     return crud_product.show(db, id=id)
 
@@ -54,13 +55,14 @@ def store_product(
 def update_product(
         id: int,
         request: schemas.ProductUpdate,
+        background_tasks: BackgroundTasks,
         db: Session = Depends(database.get_db),
         current_user: schemas.UserOut = Depends(oauth2.get_current_user)
 ):
     """
     Update product, will replace only the atributes in the request.
     """
-    return crud_product.update(db, id=id, request=request)
+    return crud_product.update(db, id=id, request=request, background_tasks=background_tasks)
 
 
 @router.delete("/{id}", tags=[])
@@ -73,3 +75,14 @@ def delete_product(
     Destroy product record.
     """
     return crud_product.delete(db, id=id)
+
+
+@router.get("/{id}/analytics", tags=['Analytics'], response_model=schemas.Analytic)
+def show_product_analytics(
+    id: int = Path(None, description="The ID of the product", gt=0),
+        db: Session = Depends(database.get_db)
+):
+    """
+    Show product analytics data.
+    """
+    return crud_analytic.show(db, id=id)

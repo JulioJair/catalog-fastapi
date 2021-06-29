@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query, Path
+from fastapi import APIRouter, Depends, HTTPException, status, Query, Path, BackgroundTasks
 
 from typing import Optional, Any
 from app import schemas, models, database, oauth2
@@ -55,13 +55,14 @@ def store_product(
 def update_product(
         id: int,
         request: schemas.ProductUpdate,
+        background_tasks: BackgroundTasks,
         db: Session = Depends(database.get_db),
         current_user: schemas.UserOut = Depends(oauth2.get_current_user)
 ):
     """
     Update product, will replace only the atributes in the request.
     """
-    return crud_product.update(db, id=id, request=request)
+    return crud_product.update(db, id=id, request=request, background_tasks=background_tasks)
 
 
 @router.delete("/{id}", tags=[])

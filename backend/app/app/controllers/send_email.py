@@ -3,9 +3,9 @@ from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from typing import List
 
 conf = ConnectionConfig(
-    MAIL_FROM="qhyzrlws2s@email.edu.pl",
-    MAIL_USERNAME="bd3cbc38de74c15b2fad0dd9fbda6297",
-    MAIL_PASSWORD="ff571f17834ef95ceabc98be3c6f3719",
+    MAIL_FROM="",
+    MAIL_USERNAME="",
+    MAIL_PASSWORD="",
     MAIL_PORT=587,
     MAIL_SERVER="in-v3.mailjet.com",
     MAIL_TLS=True,

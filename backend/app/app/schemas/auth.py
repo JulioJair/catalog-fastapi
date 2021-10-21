@@ -13,4 +13,4 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    emai: Optional[EmailStr] = None
+    email: Optional[EmailStr] = None
